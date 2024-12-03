@@ -3,6 +3,9 @@
   "name": "TLDReddit",
   "description": "Reddit thread summarizer",
   "version": "0.1",
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
   "content_scripts": [
     {
         "js": ["scripts/content.js"],
