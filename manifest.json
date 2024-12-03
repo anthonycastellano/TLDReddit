@@ -10,7 +10,7 @@
     {
         "js": ["scripts/content.js"],
         "matches": [
-            "https://www.reddit.com/*"
+            "https://www.reddit.com/r/*"
         ]
     }
   ]
