@@ -1,7 +1,6 @@
 let apiKey = '';
 
 chrome.storage.local.get(['apiKey']).then((result) => {
-    console.log(result);
     if (result.apiKey) {
         apiKey = result.apiKey;
     } else {

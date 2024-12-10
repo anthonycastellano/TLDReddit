@@ -2,6 +2,7 @@ body {
     width: 400px;
     height: 400px;
     background-color: #1f1f1f;
+    color: white;
 }
 
 #main-container {
@@ -13,4 +14,10 @@ body {
 
 #main-container h1 {
     color: #ffffff
+}
+
+.summarize-btn {
+    width: 7em;
+    height: 2em;
+    border-radius: 1em;
 }
