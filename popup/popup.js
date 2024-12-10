@@ -1,7 +1,7 @@
-const API_KEY_KEY = 'apiKey';
-
 let apiKey = '';
-chrome.storage.local.get([API_KEY_KEY]).then((result) => {
+
+chrome.storage.local.get(['apiKey']).then((result) => {
+    console.log(result);
     if (result.apiKey) {
         apiKey = result.apiKey;
     } else {
@@ -11,10 +11,6 @@ chrome.storage.local.get([API_KEY_KEY]).then((result) => {
         newInput.setAttribute('id', 'apiKeyInput');
 
         const newButton = document.createElement('button');
-        newButton.addEventListener('click', () => {
-            const apiKeyInput = document.getElementById('apiKeyInput');
-            console.log(apiKeyInput.value);
-        });
         newButton.style.width = '3em';
         newButton.style.height = '1.5em';
         newButton.innerText = 'add';
@@ -22,11 +18,18 @@ chrome.storage.local.get([API_KEY_KEY]).then((result) => {
         const newDiv = document.createElement('div');
         newDiv.appendChild(newInput);
         newDiv.appendChild(newButton);
+
+        newButton.addEventListener('click', () => {
+            // store key locally
+            chrome.storage.local.set({ apiKey: newInput.value }).then(() => {
+                newDiv.remove();
+            });
+        });
+
         mainContainer.appendChild(newDiv);
     }
 });
   
-
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (tabs[0]) {
         // Send a message to the content script of the active tab
