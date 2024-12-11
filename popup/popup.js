@@ -3,6 +3,7 @@ let apiKey = '';
 let postSummary = '';
 let commentSummary = '';
 
+// helper functions
 function getCommentSummary(summaryElem) {
     // check cached summary
     if (commentSummary) {
