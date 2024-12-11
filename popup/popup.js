@@ -14,7 +14,6 @@ function getCommentSummary(summaryElem) {
 };
 
 function getPostSummary(summaryElem) {
-    let post = '';
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0]) {
             // Send a message requesting post text
