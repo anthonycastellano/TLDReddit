@@ -1,11 +1,38 @@
 let apiKey = '';
 
+function getCommentSummary(summaryElem) {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs[0]) {
+            // Send a message requesting comment text
+            chrome.tabs.sendMessage(tabs[0].id, { request: 'comments' }, (res) => {
+                summaryElem.innerText = res.join('');
+            });
+        } else {
+            console.error('No active tab found');
+        }
+    });
+};
+
+function getPostSummary(summaryElem) {
+    let post = '';
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs[0]) {
+            // Send a message requesting post text
+            chrome.tabs.sendMessage(tabs[0].id, { request: 'post' }, (res) => {
+                summaryElem.innerText = res;
+            });
+        } else {
+            console.error('No active tab found');
+        }
+    });
+};
+
 chrome.storage.local.get(['apiKey']).then((result) => {
     if (result.apiKey) {
         apiKey = result.apiKey;
     } else {
         const mainContainer = document.getElementById('main-container');
-        
+
         const newInput = document.createElement('input');
         newInput.setAttribute('id', 'apiKeyInput');
 
@@ -28,14 +55,14 @@ chrome.storage.local.get(['apiKey']).then((result) => {
         mainContainer.appendChild(newDiv);
     }
 });
-  
-chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    if (tabs[0]) {
-        // Send a message to the content script of the active tab
-        chrome.tabs.sendMessage(tabs[0].id, { request: 'comments' }, (res) => {
-            console.log(res);
-        });
-    } else {
-        console.error('No active tab found');
-    }
+
+// add summarize logic
+const summary = document.getElementById('summary');
+const summarizeCommentsBtn = document.getElementById('summarize-comments-btn');
+const summarizePostBtn = document.getElementById('summarize-post-btn');
+summarizeCommentsBtn.addEventListener('click', () => {
+    getCommentSummary(summary);
+});
+summarizePostBtn.addEventListener('click', () => {
+    getPostSummary(summary);
 });
