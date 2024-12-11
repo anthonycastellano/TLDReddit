@@ -1,30 +1,45 @@
+// global vars
 let apiKey = '';
+let postSummary = '';
+let commentSummary = '';
 
 function getCommentSummary(summaryElem) {
+    // check cached summary
+    if (commentSummary) {
+        summaryElem.innerText = commentSummary;
+        return;
+    }
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0]) {
             // Send a message requesting comment text
             chrome.tabs.sendMessage(tabs[0].id, { request: 'comments' }, (res) => {
-                summaryElem.innerText = res.join('');
+                commentSummary = res.join('');
+                summaryElem.innerText = commentSummary;
             });
         } else {
             console.error('No active tab found');
         }
     });
-};
+}
 
 function getPostSummary(summaryElem) {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        // check cached summary
+        if (postSummary) {
+            summaryElem.innerText = postSummary;
+            return;
+        }
         if (tabs[0]) {
             // Send a message requesting post text
             chrome.tabs.sendMessage(tabs[0].id, { request: 'post' }, (res) => {
-                summaryElem.innerText = res;
+                postSummary = res;
+                summaryElem.innerText = postSummary;
             });
         } else {
             console.error('No active tab found');
         }
     });
-};
+}
 
 chrome.storage.local.get(['apiKey']).then((result) => {
     if (result.apiKey) {
