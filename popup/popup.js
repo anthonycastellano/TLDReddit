@@ -1,6 +1,8 @@
 // constants
 const COMPLETION_URL = 'https://api.openai.com/v1/chat/completions';
 const POST_SYSTEM_PROMPT = 'Summarize the following text in a paragraph or less.'
+const COMMENTS_SYSTEM_PROMPT = 'Summarize the following forum comments which are separated by a ";" character.'
+const MAX_COMMENTS = 100;
 
 // global vars
 let apiKey = '';
@@ -17,9 +19,37 @@ function getCommentSummary(summaryElem) {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0]) {
             // Send a message requesting comment text
-            chrome.tabs.sendMessage(tabs[0].id, { request: 'comments' }, (res) => {
-                commentSummary = res.join('');
-                summaryElem.innerText = commentSummary;
+            chrome.tabs.sendMessage(tabs[0].id, { request: 'comments' }, (comments) => {
+                fetch(COMPLETION_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: COMMENTS_SYSTEM_PROMPT
+                            },
+                            {
+                                role: 'user',
+                                content: comments.slice(0, MAX_COMMENTS).join(';')
+                            }
+                        ]
+                    })
+                }).then((chatRes) => {
+                    if (!chatRes.ok) {
+                        commentSummary = 'Error generating summary';
+                        summaryElem.innerText = commentSummary;
+                    } else {
+                        chatRes.json().then((chatResJSON) => {
+                            commentSummary = chatResJSON.choices[0].message.content;
+                            summaryElem.innerText = commentSummary;
+                        });
+                    }
+                });
             });
         } else {
             console.error('No active tab found');
