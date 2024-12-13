@@ -1,3 +1,7 @@
+// constants
+const COMPLETION_URL = 'https://api.openai.com/v1/chat/completions';
+const POST_SYSTEM_PROMPT = 'Summarize the following text in a paragraph or less.'
+
 // global vars
 let apiKey = '';
 let postSummary = '';
@@ -32,9 +36,37 @@ function getPostSummary(summaryElem) {
         }
         if (tabs[0]) {
             // Send a message requesting post text
-            chrome.tabs.sendMessage(tabs[0].id, { request: 'post' }, (res) => {
-                postSummary = res;
-                summaryElem.innerText = postSummary;
+            chrome.tabs.sendMessage(tabs[0].id, { request: 'post' }, (postText) => {
+                fetch(COMPLETION_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: POST_SYSTEM_PROMPT
+                            },
+                            {
+                                role: 'user',
+                                content: postText
+                            }
+                        ]
+                    })
+                }).then((chatRes) => {
+                    if (!chatRes.ok) {
+                        postSummary = 'Error generating summary';
+                        summaryElem.innerText = postSummary;
+                    } else {
+                        chatRes.json().then((chatResJSON) => {
+                            postSummary = chatResJSON.choices[0].message.content;
+                            summaryElem.innerText = postSummary;
+                        });
+                    }
+                });
             });
         } else {
             console.error('No active tab found');
