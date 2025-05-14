@@ -9,7 +9,26 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+#toolbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
+    height: 25%;
+    width: 100%;
+}
+
+#summary {
+    height: 75%;
+    width: 90%;
+    border-radius: 1em;
+    padding: 1rem;
+    overflow: scroll;
+    background-color: #2f2f2f;
 }
 
 #main-container h1 {
@@ -19,5 +38,10 @@ body {
 .summarize-btn {
     width: 7em;
     height: 2em;
-    border-radius: 1em;
+    border-radius: 0.7em;
+}
+
+.summarize-btn.active {
+    background-color: #4CAF50;
+    color: white;
 }

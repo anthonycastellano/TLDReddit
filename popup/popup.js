@@ -138,8 +138,14 @@ const summary = document.getElementById('summary');
 const summarizeCommentsBtn = document.getElementById('summarize-comments-btn');
 const summarizePostBtn = document.getElementById('summarize-post-btn');
 summarizeCommentsBtn.addEventListener('click', () => {
+    summarizeCommentsBtn.classList.add('active');
+    summarizePostBtn.classList.remove('active');
+
     getCommentSummary(summary);
 });
 summarizePostBtn.addEventListener('click', () => {
+    summarizePostBtn.classList.add('active');
+    summarizeCommentsBtn.classList.remove('active');
+
     getPostSummary(summary);
 });
