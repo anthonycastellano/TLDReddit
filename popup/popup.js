@@ -3,6 +3,7 @@ const COMPLETION_URL = 'https://api.openai.com/v1/chat/completions';
 const POST_SYSTEM_PROMPT = 'Summarize the following text in a paragraph or less.';
 const COMMENTS_SYSTEM_PROMPT = 'Summarize the following forum comments which are separated by a ";" character.';
 const MAX_COMMENTS = 100;
+const REDDIT_HOSTNAME = 'www.reddit.com';
 
 // global vars
 let apiKey = '';
@@ -143,7 +144,7 @@ chrome.storage.local.get(['apiKey']).then((result) => {
     }
 });
 
-// add summarize logic
+// DOM elements
 const summary = document.getElementById('summary');
 const summarizeCommentsBtn = document.getElementById('summarize-comments-btn');
 const summarizePostBtn = document.getElementById('summarize-post-btn');
@@ -156,6 +157,22 @@ const nodes = {
     spinner
 };
 
+// check if on reddit
+chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (!tabs[0]) {
+        console.error('No active tab found');
+        return;
+    }
+    const url = tabs[0].url;
+    if (!url.includes(REDDIT_HOSTNAME)) {
+        summarizeCommentsBtn.style.display = 'none';
+        summarizePostBtn.style.display = 'none';
+        summary.innerText = 'TLDR: This extension only works on Reddit.';
+        return;
+    }
+});
+
+// summarize logic
 summarizeCommentsBtn.addEventListener('click', () => {
     summarizeCommentsBtn.classList.add('active');
     summarizePostBtn.classList.remove('active');
