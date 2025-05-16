@@ -9,7 +9,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             }
             const commentTexts = [];
             for (const c of comments) {
-                const commentText = c.querySelector('div > div > p').textContent.trim();
+                const comment = c.querySelector('div > div > p');
+                if (!comment) {
+                    continue;
+                }
+                const commentText = comment.textContent.trim();
                 commentTexts.push(commentText);
             }
             sendResponse(commentTexts);
