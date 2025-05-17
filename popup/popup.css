@@ -109,7 +109,7 @@ body {
     border-radius: 1em;
     padding: 1em;
     margin: 1em;
-    overflow: scroll;
+    overflow-y: scroll;
     background-color: #2f2f2f;
 }
 
