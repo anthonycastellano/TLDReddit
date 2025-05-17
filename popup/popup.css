@@ -3,6 +3,8 @@ body {
     height: 400px;
     background-color: #1f1f1f;
     color: white;
+    margin: 0;
+    padding: 0;
 }
 
 #main-container {
@@ -11,6 +13,85 @@ body {
     align-items: center;
     height: 100%;
     width: 100%;
+}
+
+#settings-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    padding: 1.5em;
+    box-sizing: border-box;
+}
+
+#settings-container h1 {
+    font-size: 1.5em;
+    margin: 0 0 1em 0;
+    color: #ffffff;
+}
+
+#settings-container div {
+    width: 80%;
+    margin-bottom: 1.2em;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2em;
+
+}
+
+#settings-container label {
+    font-size: 0.9em;
+    margin-bottom: 0.3em;
+    color: #cccccc;
+}
+
+#settings-container select,
+#settings-container input[type="text"] {
+    width: 70%;
+    padding: 0.6em;
+    border-radius: 0.4em;
+    border: 1px solid #444444;
+    background-color: #2f2f2f;
+    color: white;
+    font-size: 0.9em;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+#settings-container select:focus,
+#settings-container input[type="text"]:focus {
+    outline: none;
+    border-color: #4CAF50;
+    background-color: #353535;
+}
+
+#settings-container select {
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.7em top 50%;
+    background-size: 1em;
+    padding-right: 2em;
+}
+
+#settings-container input[type="button"] {
+    width: 100%;
+    padding: 0.7em;
+    border-radius: 0.4em;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+#settings-container input[type="button"]:hover {
+    background-color: #45a049;
+}
+
+#settings-container input[type="button"]:active {
+    transform: scale(0.98);
 }
 
 #toolbar {

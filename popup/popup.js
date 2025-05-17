@@ -115,32 +115,34 @@ function getPostSummary(nodes) {
     });
 }
 
+// check for existing API key
+// chrome.storage.local.remove("apiKey", function() {
+//   if (chrome.runtime.lastError) {
+//     console.error("Error removing key:", chrome.runtime.lastError);
+//   } else {
+//     console.log("API key removed successfully");
+//   }
+// });
 chrome.storage.local.get(['apiKey']).then((result) => {
     if (result.apiKey) {
         apiKey = result.apiKey;
     } else {
-        const mainContainer = document.getElementById('main-container');
+        const mainElem = document.getElementById('main-container');
+        const settingsElem = document.getElementById('settings-container');
 
-        const newInput = document.createElement('input');
-        newInput.setAttribute('id', 'apiKeyInput');
+        // hide main page and display settings page
+        mainElem.style.display = 'none';
+        settingsElem.style.display = 'flex';
 
-        const newButton = document.createElement('button');
-        newButton.style.width = '3em';
-        newButton.style.height = '1.5em';
-        newButton.innerText = 'add';
-
-        const newDiv = document.createElement('div');
-        newDiv.appendChild(newInput);
-        newDiv.appendChild(newButton);
-
-        newButton.addEventListener('click', () => {
+        apiKeyInput = document.getElementById('api-key');
+        apiKeySubmitButton = document.getElementById('api-key-sub-btn');
+        apiKeySubmitButton.addEventListener('click', () => {
             // store key locally
-            chrome.storage.local.set({ apiKey: newInput.value }).then(() => {
-                newDiv.remove();
+            chrome.storage.local.set({ apiKey: apiKeyInput.value }).then(() => {
+                mainElem.style.display = 'flex';
+                settingsElem.style.display = 'none';
             });
         });
-
-        mainContainer.appendChild(newDiv);
     }
 });
 
