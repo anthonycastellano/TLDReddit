@@ -115,6 +115,39 @@ function getPostSummary(nodes) {
     });
 }
 
+function showSettings(nodes) {
+    console.log(nodes);
+    const { mainElem, settingsElem } = nodes;
+    mainElem.style.display = 'none';
+    settingsElem.style.display = 'flex';
+}
+
+function hideSettings(nodes) {
+    const { mainElem, settingsElem } = nodes;
+    mainElem.style.display = 'flex';
+    settingsElem.style.display = 'none';
+}
+
+// DOM elements
+const summary = document.getElementById('summary');
+const summarizeCommentsBtn = document.getElementById('summarize-comments-btn');
+const summarizePostBtn = document.getElementById('summarize-post-btn');
+const spinner = document.getElementById('spinner');
+const settingsIcon = document.getElementById('settings-icon');
+const mainElem = document.getElementById('main-container');
+const settingsElem = document.getElementById('settings-container');
+let settingsOpen = false;
+
+const nodes = {
+    summary,
+    summarizeCommentsBtn,
+    summarizePostBtn,
+    spinner,
+    settingsIcon,
+    mainElem,
+    settingsElem
+};
+
 // check for existing API key
 // chrome.storage.local.remove("apiKey", function() {
 //   if (chrome.runtime.lastError) {
@@ -127,37 +160,23 @@ chrome.storage.local.get(['apiKey']).then((result) => {
     if (result.apiKey) {
         apiKey = result.apiKey;
     } else {
-        const mainElem = document.getElementById('main-container');
-        const settingsElem = document.getElementById('settings-container');
 
         // hide main page and display settings page
-        mainElem.style.display = 'none';
-        settingsElem.style.display = 'flex';
+        showSettings(nodes);
+        settingsOpen = true;
 
         apiKeyInput = document.getElementById('api-key');
         apiKeySubmitButton = document.getElementById('api-key-sub-btn');
         apiKeySubmitButton.addEventListener('click', () => {
             // store key locally
             chrome.storage.local.set({ apiKey: apiKeyInput.value }).then(() => {
-                mainElem.style.display = 'flex';
-                settingsElem.style.display = 'none';
+                hideSettings(nodes);
+                settingsOpen = false;
             });
         });
     }
 });
 
-// DOM elements
-const summary = document.getElementById('summary');
-const summarizeCommentsBtn = document.getElementById('summarize-comments-btn');
-const summarizePostBtn = document.getElementById('summarize-post-btn');
-const spinner = document.getElementById('spinner');
-
-const nodes = {
-    summary,
-    summarizeCommentsBtn,
-    summarizePostBtn,
-    spinner
-};
 
 // check if on reddit
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -188,4 +207,15 @@ summarizePostBtn.addEventListener('click', () => {
     summarizeCommentsBtn.classList.remove('active');
 
     getPostSummary(nodes);
+});
+
+// settings icon handler
+settingsIcon.addEventListener('click', () => {
+    if (settingsOpen) {
+        hideSettings(nodes);
+        settingsOpen = false;
+    } else {
+        showSettings(nodes);
+        settingsOpen = true;
+    }
 });

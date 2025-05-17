@@ -140,3 +140,15 @@ body {
     opacity: 0;
     transition: opacity 0.3s ease;
 }
+
+#settings-icon {
+    position: absolute;
+    top: 4%;
+    right: 4%;
+    height: 24px;
+    width: 24px;
+}
+
+#settings-icon:hover {
+    cursor: pointer;
+}
