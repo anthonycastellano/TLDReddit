@@ -9,6 +9,26 @@ const REDDIT_HOSTNAME = 'www.reddit.com';
 let apiKey = '';
 let postSummary = '';
 let commentSummary = '';
+let settingsOpen = false;
+
+// DOM elements
+const summary = document.getElementById('summary');
+const summarizeCommentsBtn = document.getElementById('summarize-comments-btn');
+const summarizePostBtn = document.getElementById('summarize-post-btn');
+const spinner = document.getElementById('spinner');
+const settingsIcon = document.getElementById('settings-icon');
+const mainElem = document.getElementById('main-container');
+const settingsElem = document.getElementById('settings-container');
+
+const nodes = {
+    summary,
+    summarizeCommentsBtn,
+    summarizePostBtn,
+    spinner,
+    settingsIcon,
+    mainElem,
+    settingsElem
+};
 
 // helper functions
 function getCommentSummary(nodes) {
@@ -116,7 +136,6 @@ function getPostSummary(nodes) {
 }
 
 function showSettings(nodes) {
-    console.log(nodes);
     const { mainElem, settingsElem } = nodes;
     mainElem.style.display = 'none';
     settingsElem.style.display = 'flex';
@@ -128,50 +147,30 @@ function hideSettings(nodes) {
     settingsElem.style.display = 'none';
 }
 
-// DOM elements
-const summary = document.getElementById('summary');
-const summarizeCommentsBtn = document.getElementById('summarize-comments-btn');
-const summarizePostBtn = document.getElementById('summarize-post-btn');
-const spinner = document.getElementById('spinner');
-const settingsIcon = document.getElementById('settings-icon');
-const mainElem = document.getElementById('main-container');
-const settingsElem = document.getElementById('settings-container');
-let settingsOpen = false;
-
-const nodes = {
-    summary,
-    summarizeCommentsBtn,
-    summarizePostBtn,
-    spinner,
-    settingsIcon,
-    mainElem,
-    settingsElem
-};
+function toggleSettings() {
+    if (settingsOpen) {
+        hideSettings(nodes);
+        settingsOpen = false;
+    } else {
+        showSettings(nodes);
+        settingsOpen = true;
+    }
+}
 
 // check for existing API key
-// chrome.storage.local.remove("apiKey", function() {
-//   if (chrome.runtime.lastError) {
-//     console.error("Error removing key:", chrome.runtime.lastError);
-//   } else {
-//     console.log("API key removed successfully");
-//   }
-// });
 chrome.storage.local.get(['apiKey']).then((result) => {
     if (result.apiKey) {
         apiKey = result.apiKey;
     } else {
-
         // hide main page and display settings page
-        showSettings(nodes);
-        settingsOpen = true;
+        toggleSettings();
 
         apiKeyInput = document.getElementById('api-key');
         apiKeySubmitButton = document.getElementById('api-key-sub-btn');
         apiKeySubmitButton.addEventListener('click', () => {
             // store key locally
             chrome.storage.local.set({ apiKey: apiKeyInput.value }).then(() => {
-                hideSettings(nodes);
-                settingsOpen = false;
+               toggleSettings();
             });
         });
     }
@@ -211,11 +210,5 @@ summarizePostBtn.addEventListener('click', () => {
 
 // settings icon handler
 settingsIcon.addEventListener('click', () => {
-    if (settingsOpen) {
-        hideSettings(nodes);
-        settingsOpen = false;
-    } else {
-        showSettings(nodes);
-        settingsOpen = true;
-    }
+    toggleSettings();
 });
