@@ -1,8 +1,9 @@
 // constants
 const COMPLETION_URL = 'https://api.openai.com/v1/chat/completions';
+const COMMENT_DELIM = '|';
 const POST_SYSTEM_PROMPT = 'Summarize the following text in a paragraph or less.';
-const COMMENTS_SYSTEM_PROMPT = 'Summarize the following forum comments which are separated by a ";" character.';
-const MAX_COMMENTS = 100;
+const COMMENTS_SYSTEM_PROMPT = `Summarize the following forum comments which are delimted by the '${COMMENT_DELIM}' character.`;
+const MAX_COMMENT_CHARS = 50_000;
 const REDDIT_HOSTNAME = 'www.reddit.com';
 
 // global vars
@@ -70,7 +71,7 @@ function getCommentSummary(nodes) {
                         },
                         {
                             role: 'user',
-                            content: comments.slice(0, MAX_COMMENTS).join(';')
+                            content: comments.join(COMMENT_DELIM).substring(0, MAX_COMMENT_CHARS)
                         }
                     ]
                 })
