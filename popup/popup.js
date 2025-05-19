@@ -56,6 +56,12 @@ function getCommentSummary(nodes) {
         summary.innerText = '';
         // send a message requesting comment text
         chrome.tabs.sendMessage(tabs[0].id, { request: 'comments' }, (comments) => {
+            if (!comments) {
+                commentSummary = 'No comments found';
+                summary.innerText = commentSummary;
+                spinner.style.opacity = 0;
+                return;
+            }
             fetch(COMPLETION_URL, {
                 method: 'POST',
                 headers: {
@@ -108,6 +114,12 @@ function getPostSummary(nodes) {
         }
         // Send a message requesting post text
         chrome.tabs.sendMessage(tabs[0].id, { request: 'post' }, (postText) => {
+            if (!postText) {
+                postSummary = 'No comments found';
+                summary.innerText = postSummary;
+                spinner.style.opacity = 0;
+                return;
+            }
             fetch(COMPLETION_URL, {
                 method: 'POST',
                 headers: {

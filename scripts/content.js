@@ -19,10 +19,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             sendResponse(commentTexts);
         case 'post':
             // get post text
-            const post = document.querySelector('[slot="text-body"]');
-            if (!post) {
-                sendResponse('');
+            const postTitle = document.querySelector('[slot="title"]');
+            const postBody = document.querySelector('[slot="text-body"]');
+
+            let postText = postTitle ? postTitle.textContent : '';
+            if (postBody) {
+                postText += '\n' + postBody.querySelector('div > div > p').textContent.trim();
             }
-            sendResponse(post.querySelector('div > div > p').textContent.trim());
+
+            sendResponse(postText);
     }
 });
