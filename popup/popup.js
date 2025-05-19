@@ -19,6 +19,9 @@ const spinner = document.getElementById('spinner');
 const settingsIcon = document.getElementById('settings-icon');
 const mainElem = document.getElementById('main-container');
 const settingsElem = document.getElementById('settings-container');
+const apiKeyInput = document.getElementById('api-key');
+const settingsSubmitBtn = document.getElementById('api-key-sub-btn');
+const modelProviderDropdown = document.getElementById('model-provider');
 
 const nodes = {
     summary,
@@ -27,7 +30,10 @@ const nodes = {
     spinner,
     settingsIcon,
     mainElem,
-    settingsElem
+    settingsElem,
+    apiKeyInput,
+    settingsSubmitBtn,
+    modelProviderDropdown,
 };
 
 // helper functions
@@ -72,6 +78,7 @@ function getCommentSummary(nodes) {
                 if (!chatRes.ok) {
                     commentSummary = 'Error generating summary';
                     summary.innerText = commentSummary;
+                    spinner.style.opacity = 0;
                 } else {
                     chatRes.json().then((chatResJSON) => {
                         spinner.style.opacity = 0;
@@ -123,6 +130,7 @@ function getPostSummary(nodes) {
                 if (!chatRes.ok) {
                     postSummary = 'Error generating summary';
                     summary.innerText = postSummary;
+                    spinner.style.opacity = 0;
                 } else {
                     chatRes.json().then((chatResJSON) => {
                         spinner.style.opacity = 0;
@@ -136,9 +144,29 @@ function getPostSummary(nodes) {
 }
 
 function showSettings(nodes) {
-    const { mainElem, settingsElem } = nodes;
+    const { mainElem, settingsElem, apiKeyInput, settingsSubmitBtn, modelProviderDropdown } = nodes;
     mainElem.style.display = 'none';
     settingsElem.style.display = 'flex';
+    apiKeyInput.value = '';
+
+    // if apiKey is set, disable the input field for API key
+    if (apiKey) {
+        apiKeyInput.disabled = true;
+        apiKeyInput.placeholder = 'API key already set';
+
+        modelProviderDropdown.disabled = true;
+
+        settingsSubmitBtn.value = 'Clear';
+        settingsSubmitBtn.style.backgroundColor = '#ff0000';
+    } else {
+        apiKeyInput.disabled = false;
+        apiKeyInput.placeholder = 'Enter your API key';
+
+        modelProviderDropdown.disabled = false;
+
+        settingsSubmitBtn.value = 'Save';
+        settingsSubmitBtn.style.backgroundColor = '#00ff00';
+    }
 }
 
 function hideSettings(nodes) {
@@ -164,15 +192,6 @@ chrome.storage.local.get(['apiKey']).then((result) => {
     } else {
         // hide main page and display settings page
         toggleSettings();
-
-        apiKeyInput = document.getElementById('api-key');
-        apiKeySubmitButton = document.getElementById('api-key-sub-btn');
-        apiKeySubmitButton.addEventListener('click', () => {
-            // store key locally
-            chrome.storage.local.set({ apiKey: apiKeyInput.value }).then(() => {
-               toggleSettings();
-            });
-        });
     }
 });
 
@@ -211,4 +230,22 @@ summarizePostBtn.addEventListener('click', () => {
 // settings icon handler
 settingsIcon.addEventListener('click', () => {
     toggleSettings();
+});
+
+// settings submit handler
+settingsSubmitBtn.addEventListener('click', () => {
+    if (apiKey) {
+        // remove key from local storage
+        chrome.storage.local.remove('apiKey');
+        apiKey = '';
+
+        // update UI
+        showSettings(nodes);
+    } else {
+        // store key locally
+        chrome.storage.local.set({ apiKey: apiKeyInput.value }).then(() => {
+            toggleSettings();
+            apiKey = apiKeyInput.value;
+        });
+    }
 });
